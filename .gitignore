@@ -1,0 +1,10 @@
+node_modules
+.DS_Store
+*.log
+
+# Reports, screenshots and Allure output
+/tests/reports/
+
+# Editor directories and files
+.vscode
+.idea
