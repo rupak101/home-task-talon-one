@@ -1,0 +1,19 @@
+{
+  "categories": {
+    "laptops": "Laptops"
+  },
+  "laptops": {
+    "sonyVaioI5": { "id": 8, "name": "Sony vaio i5", "price": 790 },
+    "macBookPro": { "id": 15, "name": "MacBook Pro", "price": 1100 }
+  },
+  "customer": {
+    "name": "Jane Tester",
+    "country": "Germany",
+    "city": "Berlin",
+    "card": "4111111111111111",
+    "month": "12",
+    "year": "2030"
+  },
+  "invalidPayment": { "card": "abcd", "month": "13", "year": "1999" },
+  "wrongPassword": "WrongPassword!1"
+}
