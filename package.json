@@ -1,0 +1,40 @@
+{
+  "name": "demoblaze-cypress-tests",
+  "version": "1.0.0",
+  "description": "Cypress + TypeScript end-to-end tests for the login and laptop purchase flow on demoblaze.com",
+  "private": true,
+  "scripts": {
+    "cy:open": "cypress open",
+    "test": "npm run clean:reports && cypress run",
+    "test:smoke": "npm run clean:reports && cypress run --expose grepTags=@smoke",
+    "test:api": "npm run clean:reports && cypress run --expose grepTags=@api",
+    "test:headed": "npm run clean:reports && cypress run --headed",
+    "test:chrome": "npm run clean:reports && cypress run --browser chrome",
+    "test:docker": "docker build -t demoblaze-tests . && docker run --rm --init --ipc=host -e TEST_ENV -v \"$PWD/tests/reports:/e2e/tests/reports\" demoblaze-tests",
+    "clean:reports": "node -e \"const fs=require('fs'),d='tests/reports';fs.mkdirSync(d,{recursive:true});for(const f of fs.readdirSync(d))fs.rmSync(d+'/'+f,{recursive:true,force:true})\"",
+    "allure:generate": "allure generate tests/reports/allure-results",
+    "allure:open": "allure open tests/reports/allure-report",
+    "lint": "eslint . --fix && prettier --write .",
+    "format:check": "prettier --check .",
+    "lint:check": "eslint .",
+    "typecheck": "tsc"
+  },
+  "devDependencies": {
+    "@cypress/grep": "7.0.0",
+    "@eslint/js": "10.0.1",
+    "@testing-library/cypress": "10.1.3",
+    "@types/node": "22.20.5",
+    "allure": "3.33.0",
+    "allure-cypress": "3.14.0",
+    "allure-js-commons": "3.14.0",
+    "cypress": "16.2.1",
+    "eslint": "10.14.0",
+    "eslint-plugin-cypress": "7.0.3",
+    "prettier": "3.9.10",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.72.1"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

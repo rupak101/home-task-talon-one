@@ -1,0 +1,12 @@
+{
+  "name": "Demoblaze E2E",
+  "output": "tests/reports/allure-report",
+  "plugins": {
+    "awesome": {
+      "options": {
+        "reportName": "Demoblaze E2E",
+        "singleFile": true
+      }
+    }
+  }
+}

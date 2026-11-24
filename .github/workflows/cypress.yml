@@ -1,0 +1,75 @@
+name: Cypress tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  # Nightly, since the live site can change without a commit here.
+  schedule:
+    - cron: "0 3 * * *"
+
+jobs:
+  static-checks:
+    name: Format, lint and typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          CYPRESS_INSTALL_BINARY: 0
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Lint
+        run: npm run lint:check
+
+      - name: Type-check the tests
+        run: npm run typecheck
+
+  test:
+    name: Tests (${{ matrix.browser }})
+    needs: static-checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      # Each browser job signs up its own user, so the jobs run at the same time without sharing a cart.
+      fail-fast: false
+      matrix:
+        browser: [chrome, firefox]
+    env:
+      TEST_ENV: ${{ vars.TEST_ENV || 'test-demo' }}
+
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Build the test image
+        run: docker build -t demoblaze-tests .
+
+      - name: Run tests
+        run: >-
+          docker run --rm --init --ipc=host
+          -e TEST_ENV
+          -v "$PWD/tests/reports:/e2e/tests/reports"
+          demoblaze-tests npx cypress run --browser ${{ matrix.browser }}
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: test-reports-${{ matrix.browser }}
+          path: |
+            tests/reports/allure-report/
+            tests/reports/screenshots/
+          if-no-files-found: ignore
+          retention-days: 14
